@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My App UTS - Operasi Matematika</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandCyan: ' #00bcd4',
+                        brandCyanHover: '#00acc1',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-gray-50 flex flex-col min-h-screen text-gray-800 antialiased selection:bg-brandCyan selection:text-white">
+
+    <!-- 1. HEADER SECTION -->
+    <header class="bg-brandCyan text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-2">
+                <span class="font-bold text-lg tracking-tight">My App UTS</span>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex space-x-6 text-sm font-medium">
+                <a href="#home" class="hover:underline transition-all opacity-95 hover:opacity-100">Home</a>
+                <a href="#about" class="hover:underline transition-all opacity-95 hover:opacity-100">About</a>
+                <a href="#contact" class="hover:underline transition-all opacity-95 hover:opacity-100">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 2. MAIN CONTENT AREA -->
+    <main class="flex-grow flex items-center justify-center px-4 py-12">
+        <div
+            class="w-full max-w-lg bg-white rounded-xl shadow-lg border border-gray-100 p-6 sm:p-8 transition-all hover:shadow-xl">
+            <!-- Title -->
+            <h1 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-8">
+                Operasi Matematika dengan JavaScript
+            </h1>
+
+            <!-- Form -->
+            <form id="calcForm" onsubmit="event.preventDefault(); calculateResult();" class="space-y-5">
+                <!-- Input 1 -->
+                <div>
+                    <label for="angkaPertama"
+                        class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">
+                        Angka Pertama
+                    </label>
+                    <input type="number" step="any" id="angkaPertama" placeholder="Masukkan angka pertama"
+                        class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brandCyan focus:border-brandCyan text-gray-800 placeholder-gray-400 text-sm transition-all"
+                        required />
+                </div>
+
+                <!-- Input 2 -->
+                <div>
+                    <label for="angkaKedua"
+                        class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">
+                        Angka Kedua
+                    </label>
+                    <input type="number" step="any" id="angkaKedua" placeholder="Masukkan angka kedua"
+                        class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brandCyan focus:border-brandCyan text-gray-800 placeholder-gray-400 text-sm transition-all"
+                        required />
+                </div>
+
+                <!-- Select Operation -->
+                <div>
+                    <label for="operasi"
+                        class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">
+                        Operasi
+                    </label>
+                    <div class="relative">
+                        <select id="operasi"
+                            class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brandCyan focus:border-brandCyan text-gray-800 text-sm appearance-none bg-white transition-all pr-10 cursor-pointer">
+                            <option value="tambah">Penjumlahan (+)</option>
+                            <option value="kurang">Pengurangan (-)</option>
+                            <option value="kali">Perkalian (×)</option>
+                            <option value="bagi">Pembagian (÷)</option>
+                        </select>
+                        <div
+                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-2">
+                    <button type="submit"
+                        class="w-auto px-6 py-2.5 bg-brandCyan hover:bg-brandCyanHover active:scale-95 text-white font-medium text-sm rounded-lg shadow-sm transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brandCyan">
+                        Hitung
+                    </button>
+                </div>
+            </form>
+
+            <!-- Result Box -->
+            <div id="resultContainer" class="hidden mt-6 p-4 rounded-lg border transition-all">
+                <p class="text-xs uppercase font-semibold text-gray-500 mb-1" id="resultLabel">Hasil Perhitungan</p>
+                <div id="resultOutput" class="text-lg font-bold"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 3. FOOTER SECTION -->
+    <footer class="bg-brandCyan text-white text-xs sm:text-sm py-3 text-center shadow-inner">
+        <p>&copy; 2026 My App. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JS Logic -->
+    <script>
+        /**
+         * Calculates mathematical operations based on form inputs.
+         * Handles addition, subtraction, multiplication, and division.
+         * Displays structured results or friendly error messages.
+         */
+        function calculateResult() {
+            const rawInput1 = document.getElementById('angkaPertama').value;
+            const rawInput2 = document.getElementById('angkaKedua').value;
+            const operation = document.getElementById('operasi').value;
+
+            const resultContainer = document.getElementById('resultContainer');
+            const resultLabel = document.getElementById('resultLabel');
+            const resultOutput = document.getElementById('resultOutput');
+
+            // Parse floating point numbers
+            const num1 = parseFloat(rawInput1);
+            const num2 = parseFloat(rawInput2);
+
+            // Validation Check
+            if (isNaN(num1) || isNaN(num2)) {
+                showFeedback(resultContainer, resultLabel, resultOutput, 'Kesalahan Input', 'Harap masukkan nilai numerik yang valid pada kedua kolom.', true);
+                return;
+            }
+
+            let result = 0;
+            let opSymbol = '';
+
+            switch (operation) {
+                case 'tambah':
+                    result = num1 + num2;
+                    opSymbol = '+';
+                    break;
+                case 'kurang':
+                    result = num1 - num2;
+                    opSymbol = '-';
+                    break;
+                case 'kali':
+                    result = num1 * num2;
+                    opSymbol = '×';
+                    break;
+                case 'bagi':
+                    if (num2 === 0) {
+                        showFeedback(resultContainer, resultLabel, resultOutput, 'Peringatan Operasi', 'Tidak dapat melakukan pembagian dengan angka 0!', true);
+                        return;
+                    }
+                    result = num1 / num2;
+                    opSymbol = '÷';
+                    break;
+                default:
+                    showFeedback(resultContainer, resultLabel, resultOutput, 'Kesalahan System', 'Operasi matematika tidak dikenali.', true);
+                    return;
+            }
+
+            // Format float numbers if decimal precision is too long
+            const formattedResult = Number.isInteger(result) ? result : parseFloat(result.toFixed(6));
+
+            showFeedback(
+                resultContainer,
+                resultLabel,
+                resultOutput,
+                `Hasil ${num1} ${opSymbol} ${num2}`,
+                `= ${formattedResult}`,
+                false
+            );
+        }
+
+        /**
+         * Renders feedback/result to the UI with appropriate styles
+         */
+        function showFeedback(container, labelElem, outputElem, labelText, outputText, isError) {
+            container.classList.remove('hidden', 'bg-red-50', 'border-red-200', 'text-red-700', 'bg-cyan-50', 'border-cyan-200', 'text-gray-900');
+
+            if (isError) {
+                container.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
+            } else {
+                container.classList.add('bg-cyan-50', 'border-cyan-200', 'text-gray-900');
+            }
+
+            labelElem.textContent = labelText;
+            outputElem.textContent = outputText;
+        }
+    </script>
+</body>
+
+</html>
